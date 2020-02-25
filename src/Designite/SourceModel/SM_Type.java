@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+import Designite.DesigniteNotifier;
 import Designite.InputArgs;
 import Designite.metrics.MethodMetrics;
 import Designite.smells.implementationSmells.ImplementationSmellDetector;
@@ -25,7 +26,7 @@ import Designite.utils.models.Vertex;
 import Designite.visitors.StaticFieldAccessVisitor;
 
 //TODO check EnumDeclaration, AnnotationTypeDeclaration and nested classes
-public class SM_Type extends SM_SourceItem implements Vertex {
+public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier {
 	
 	
 	private boolean isAbstract = false;
@@ -50,7 +51,17 @@ public class SM_Type extends SM_SourceItem implements Vertex {
 	private Map<SM_Method, MethodMetrics> metricsMapping = new HashMap<>();
 	private Map<SM_Method, List<ImplementationCodeSmell>> smellMapping = new HashMap<>();
 	private InputArgs inputArgs;
+	private static final Map<String, HashMap<String, ArrayList<String>>> bugList = new HashMap<String, HashMap<String, ArrayList<String>>>(); ;
+	
 
+	public static Map<String, HashMap<String, ArrayList<String>>> getBuglist() {
+		return bugList;
+	}
+	
+	public SM_Type() {
+		
+	}
+	
 	public SM_Type(TypeDeclaration typeDeclaration, CompilationUnit compilationUnit, SM_Package pkg, InputArgs inputArgs) {
 		parentPkg = pkg;
 		if (typeDeclaration == null || compilationUnit == null)
@@ -62,6 +73,12 @@ public class SM_Type extends SM_SourceItem implements Vertex {
 		setTypeInfo();
 		setAccessModifier(typeDeclaration.getModifiers());
 		setImportList(compilationUnit);
+//		synchronized (SM_Type.class) {
+//			if (bugList == null) {
+//				bugList = new HashMap<String, HashMap<String, ArrayList<String>>>();
+//			}	
+//		}
+		
 	}
 	
 	public List<SM_Type> getSuperTypes() {
@@ -378,16 +395,42 @@ public class SM_Type extends SM_SourceItem implements Vertex {
 	}
 	
 	public void extractCodeSmells() {
+		List<List<ImplementationCodeSmell>> bugsMap =  new ArrayList<List<ImplementationCodeSmell>>();
+
 		for (SM_Method method : methodList) {
+//			ImplementationSmellDetector detector = new ImplementationSmellDetector(metricsMapping.get(method)
+//					, new SourceItemInfo(getParentPkg().getParentProject().getName()
+//							, getParentPkg().getName()
+//							, getName()
+//							, method.getName()));
+//			smellMapping.put(method, detector.detectCodeSmells());
+			
 			ImplementationSmellDetector detector = new ImplementationSmellDetector(metricsMapping.get(method)
 					, new SourceItemInfo(getParentPkg().getParentProject().getName()
-							, getParentPkg().getName()
+							,getParentPkg().getName()
 							, getName()
 							, method.getName()));
-			smellMapping.put(method, detector.detectCodeSmells());
-			exportDesignSmellsToCSV(method);
+			
+			List<ImplementationCodeSmell> smellList = detector.detectCodeSmells();
+			
+			if(smellList.size() != 0) {
+				bugsMap.add(smellList);	
+				//System.out.println(smellList);
+				
+			}
+			
+			
+			//System.out.println(detector.detectCodeSmells());
+	
+			
+			//exportDesignSmellsToCSV(method);
+			
 			
 		}
+		if (!bugsMap.isEmpty()) {
+			bugList(bugsMap);
+		}
+		
 	}
 	
 	private void exportDesignSmellsToCSV(SM_Method method) {
@@ -396,9 +439,58 @@ public class SM_Type extends SM_SourceItem implements Vertex {
 				, smellMapping.get(method));
 	}
 	
+	public void bugList(List<List<ImplementationCodeSmell>> bugMap) {
+		
+		
+		for (List<ImplementationCodeSmell> smellList : bugMap) {
+			
+			if ((smellList.size() != 0)) {
+			
+				String key1 = null;
+				String key2 = null;
+				String value = null;
+				
+				for (ImplementationCodeSmell item : smellList) {
+					
+					key1 = item.getPackageName()+"."+item.getTypeName();
+					key2 = key1+"."+item.getMethodName();
+					value = item.getSmellName();
+//					valueList.add(value);
+					if (bugList.get(key1) != null) {
+						HashMap<String, ArrayList<String>> methodSmell = bugList.get(key1);
+						if (methodSmell.get(key2) != null) {
+							methodSmell.get(key2).add(value);
+						}else {
+							ArrayList<String> valueList = new ArrayList<String>();
+							methodSmell.put(key2, valueList);
+							valueList.add(value);
+							
+						}
+					}else {
+						HashMap<String, ArrayList<String>> valueMap =  new HashMap<String, ArrayList<String>>();
+						bugList.put(key1, valueMap);
+						ArrayList<String> valueList = new ArrayList<String>();
+						valueMap.put(key2, valueList);
+						valueList.add(value);
+					}
+									
+				}
+				
+				
+			}
+		}
+//		System.out.println(bugList);
+	}
+	
 	@Override
 	public String toString() {
 		return "Type="+name;
+	}
+
+	@Override
+	public void getSmellsJCity(Map<SM_Method, List<ImplementationCodeSmell>> smellMap) {
+		smellMap = smellMapping;
+		
 	}
 
 }

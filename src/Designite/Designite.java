@@ -21,18 +21,17 @@ import org.apache.commons.cli.*;
  */
 public class Designite {
 	public static void main(String[] args) throws IOException {
-		String[] arg = new String[] {"-i","D:\\EclipsePrograms\\JavaCityBackEnd", "-o","D:\\Academic\\IT mora\\Course Modules\\4th Year\\Research Project\\Dependency Extractor\\Design Ingniter csv"};
+		String[] arg = new String[] {"-i","D:\\Academic\\IT mora\\Course Modules\\4th Year\\Research Project\\Dependency Extractor\\Theekshana\\code_city-master\\code_city", "-o","D:\\Academic\\IT mora\\Course Modules\\4th Year\\Research Project\\Dependency Extractor\\Design Ingniter csv"};
 		InputArgs argsObj = parseArguments(arg);
-		SM_Project project = new SM_Project(argsObj);
+		SM_Project project = new SM_Project(argsObj); //get source name and path for save result - argsObj
 		Logger.logFile = getlogFileName(argsObj);
 		//TODO: log the version number
 		project.parse();
 		project.resolve();
 		project.computeMetrics();
 		project.detectCodeSmells();
-		if (Constants.DEBUG)
-			writeDebugLog(argsObj, project);
-		Logger.log("Done.");
+		
+		System.out.println(new SM_Type().getBuglist()); 
 	}
 
 	private static void writeDebugLog(InputArgs argsObj, SM_Project project) {
@@ -46,11 +45,11 @@ public class Designite {
 		Options argOptions = new Options();
 
         Option input = new Option("i", "Input", true, "Input source folder path");
-        input.setRequired(true);
+        input.setRequired(false);
         argOptions.addOption(input);
 
         Option output = new Option("o", "Output", true, "Path to the output folder");
-        output.setRequired(true);
+        output.setRequired(false);
         argOptions.addOption(output);
 
         CommandLineParser parser = new DefaultParser();
