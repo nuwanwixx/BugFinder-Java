@@ -141,7 +141,7 @@ public class SM_Package extends SM_SourceItem {
 	private void exportMetricsToCSV(TypeMetrics metrics, String typeName) {
 		String path = inputArgs.getOutputFolder()
 				+ File.separator + Constants.TYPE_METRICS_PATH_SUFFIX;
-		CSVUtils.addToCSVFile(path, getMetricsAsARow(metrics, typeName));
+//		CSVUtils.addToCSVFile(path, getMetricsAsARow(metrics, typeName));
 	}
 	
 	private String getMetricsAsARow(TypeMetrics metrics, String typeName) {
@@ -170,15 +170,15 @@ public class SM_Package extends SM_SourceItem {
 							, type.getName())
 					);
 			type.extractCodeSmells();
-			smellMapping.put(type, detector.detectCodeSmells());
-			exportDesignSmellsToCSV(type);
+//			smellMapping.put(type, detector.detectCodeSmells());
+//			exportDesignSmellsToCSV(type);
 		}
 	}
 
-	private void exportDesignSmellsToCSV(SM_Type type) {
-		CSVUtils.addAllToCSVFile(inputArgs.getOutputFolder()
-				+ File.separator + Constants.DESIGN_CODE_SMELLS_PATH_SUFFIX
-				, smellMapping.get(type));
-	}
+//	private void exportDesignSmellsToCSV(SM_Type type) {
+//		CSVUtils.addAllToCSVFile(inputArgs.getOutputFolder()
+//				+ File.separator + Constants.DESIGN_CODE_SMELLS_PATH_SUFFIX
+//				, smellMapping.get(type));
+//	}
 
 }

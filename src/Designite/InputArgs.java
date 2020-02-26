@@ -10,9 +10,9 @@ public class InputArgs {
 		//It is invoked only in case of error
 	}
 
-	public InputArgs(String inputFolderPath, String outputFolderPath) {
+	public InputArgs(String inputFolderPath) {
 		sourceFolder = inputFolderPath;
-		outputFolder = outputFolderPath;
+		outputFolder = "";
 		checkEssentialInputs();
 	}
 

@@ -10,9 +10,9 @@ public class CSVUtils {
 	//TODO create an integration test for checking the exporting feature
 	public static void initializeCSVDirectory(String projectName, String dirPath) {
 		File dir = new File(dirPath);
-		createDirIfNotExists(dir);
+//		createDirIfNotExists(dir);
 		cleanup(dir);
-		initializeNeededFiles(dir);
+		//initializeNeededFiles(dir);
 	}
 	
 	private static void createDirIfNotExists(File dir) {
@@ -39,12 +39,12 @@ public class CSVUtils {
 		}
 	}
 	
-	private static void initializeNeededFiles(File dir) {
-		createCSVFile(dir.getPath() + File.separator + Constants.TYPE_METRICS_PATH_SUFFIX, Constants.TYPE_METRICS_HEADER);
-		createCSVFile(dir.getPath() + File.separator + Constants.METHOD_METRICS_PATH_SUFFIX, Constants.METHOD_METRICS_HEADER);
-		createCSVFile(dir.getPath() + File.separator + Constants.DESIGN_CODE_SMELLS_PATH_SUFFIX, Constants.DESIGN_CODE_SMELLS_HEADER);
-		createCSVFile(dir.getPath() + File.separator + Constants.IMPLEMENTATION_CODE_SMELLS_PATH_SUFFIX, Constants.IMPLEMENTATION_CODE_SMELLS_HEADER);
-	}
+//	private static void initializeNeededFiles(File dir) {
+//		createCSVFile(dir.getPath() + File.separator + Constants.TYPE_METRICS_PATH_SUFFIX, Constants.TYPE_METRICS_HEADER);
+//		createCSVFile(dir.getPath() + File.separator + Constants.METHOD_METRICS_PATH_SUFFIX, Constants.METHOD_METRICS_HEADER);
+//		createCSVFile(dir.getPath() + File.separator + Constants.DESIGN_CODE_SMELLS_PATH_SUFFIX, Constants.DESIGN_CODE_SMELLS_HEADER);
+//		createCSVFile(dir.getPath() + File.separator + Constants.IMPLEMENTATION_CODE_SMELLS_PATH_SUFFIX, Constants.IMPLEMENTATION_CODE_SMELLS_HEADER);
+//	}
 	
 	private static void createCSVFile(String path, String header) {
 		try {

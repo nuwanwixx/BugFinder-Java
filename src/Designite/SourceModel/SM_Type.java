@@ -1,6 +1,7 @@
 package Designite.SourceModel;
 
 import java.io.File;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-import Designite.DesigniteNotifier;
 import Designite.InputArgs;
 import Designite.metrics.MethodMetrics;
 import Designite.smells.implementationSmells.ImplementationSmellDetector;
@@ -26,7 +26,7 @@ import Designite.utils.models.Vertex;
 import Designite.visitors.StaticFieldAccessVisitor;
 
 //TODO check EnumDeclaration, AnnotationTypeDeclaration and nested classes
-public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier {
+public class SM_Type extends SM_SourceItem implements Vertex {
 	
 	
 	private boolean isAbstract = false;
@@ -73,11 +73,7 @@ public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier 
 		setTypeInfo();
 		setAccessModifier(typeDeclaration.getModifiers());
 		setImportList(compilationUnit);
-//		synchronized (SM_Type.class) {
-//			if (bugList == null) {
-//				bugList = new HashMap<String, HashMap<String, ArrayList<String>>>();
-//			}	
-//		}
+
 		
 	}
 	
@@ -369,20 +365,14 @@ public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier 
 			MethodMetrics metrics = new MethodMetrics(method);
 			metrics.extractMetrics();
 			metricsMapping.put(method, metrics);
-			exportMethodMetricsToCSV(metrics, method.getName());
+
 		}
 	}
 	
 	public MethodMetrics getMetricsFromMethod(SM_Method method) {
 		return metricsMapping.get(method);
 	}
-	
-	public void exportMethodMetricsToCSV(MethodMetrics metrics, String methodName) {
-		String path = inputArgs.getOutputFolder()
-				+ File.separator + Constants.METHOD_METRICS_PATH_SUFFIX;
-		CSVUtils.addToCSVFile(path, getMetricsAsARow(metrics, methodName));
-	}
-	
+
 	private String getMetricsAsARow(MethodMetrics metrics, String methodName) {
 		return getParentPkg().getParentProject().getName()
 				+ "," + getParentPkg().getName()
@@ -398,12 +388,6 @@ public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier 
 		List<List<ImplementationCodeSmell>> bugsMap =  new ArrayList<List<ImplementationCodeSmell>>();
 
 		for (SM_Method method : methodList) {
-//			ImplementationSmellDetector detector = new ImplementationSmellDetector(metricsMapping.get(method)
-//					, new SourceItemInfo(getParentPkg().getParentProject().getName()
-//							, getParentPkg().getName()
-//							, getName()
-//							, method.getName()));
-//			smellMapping.put(method, detector.detectCodeSmells());
 			
 			ImplementationSmellDetector detector = new ImplementationSmellDetector(metricsMapping.get(method)
 					, new SourceItemInfo(getParentPkg().getParentProject().getName()
@@ -415,17 +399,9 @@ public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier 
 			
 			if(smellList.size() != 0) {
 				bugsMap.add(smellList);	
-				//System.out.println(smellList);
 				
 			}
-			
-			
-			//System.out.println(detector.detectCodeSmells());
-	
-			
-			//exportDesignSmellsToCSV(method);
-			
-			
+
 		}
 		if (!bugsMap.isEmpty()) {
 			bugList(bugsMap);
@@ -433,11 +409,6 @@ public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier 
 		
 	}
 	
-	private void exportDesignSmellsToCSV(SM_Method method) {
-		CSVUtils.addAllToCSVFile(inputArgs.getOutputFolder()
-				+ File.separator + Constants.IMPLEMENTATION_CODE_SMELLS_PATH_SUFFIX
-				, smellMapping.get(method));
-	}
 	
 	public void bugList(List<List<ImplementationCodeSmell>> bugMap) {
 		
@@ -455,7 +426,7 @@ public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier 
 					key1 = item.getPackageName()+"."+item.getTypeName();
 					key2 = key1+"."+item.getMethodName();
 					value = item.getSmellName();
-//					valueList.add(value);
+
 					if (bugList.get(key1) != null) {
 						HashMap<String, ArrayList<String>> methodSmell = bugList.get(key1);
 						if (methodSmell.get(key2) != null) {
@@ -472,14 +443,10 @@ public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier 
 						ArrayList<String> valueList = new ArrayList<String>();
 						valueMap.put(key2, valueList);
 						valueList.add(value);
-					}
-									
-				}
-				
-				
+					}					
+				}		
 			}
 		}
-//		System.out.println(bugList);
 	}
 	
 	@Override
@@ -487,10 +454,5 @@ public class SM_Type extends SM_SourceItem implements Vertex, DesigniteNotifier 
 		return "Type="+name;
 	}
 
-	@Override
-	public void getSmellsJCity(Map<SM_Method, List<ImplementationCodeSmell>> smellMap) {
-		smellMap = smellMapping;
-		
-	}
 
 }
