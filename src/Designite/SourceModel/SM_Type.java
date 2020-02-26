@@ -2,6 +2,7 @@ package Designite.SourceModel;
 
 import java.io.File;
 
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +20,6 @@ import Designite.InputArgs;
 import Designite.metrics.MethodMetrics;
 import Designite.smells.implementationSmells.ImplementationSmellDetector;
 import Designite.smells.models.ImplementationCodeSmell;
-import Designite.utils.CSVUtils;
-import Designite.utils.Constants;
 import Designite.utils.models.Edge;
 import Designite.utils.models.Vertex;
 import Designite.visitors.StaticFieldAccessVisitor;

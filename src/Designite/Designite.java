@@ -1,23 +1,13 @@
 package Designite;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import Designite.SourceModel.*;
-import Designite.utils.Constants;
-import Designite.utils.Logger;
 
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import org.apache.commons.cli.*;
+
 
 /**
  * 
- * This is the start of the project
+ * This is the start of the bug finder
  */
 public class Designite {
 	public static void main(String[] args) throws IOException {

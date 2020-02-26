@@ -1,13 +1,12 @@
 package Designite.smells;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
-
-import Designite.utils.Logger;
 
 public class ThresholdsParser {
 	
@@ -32,7 +31,7 @@ public class ThresholdsParser {
 	private void checkFileExists() throws FileNotFoundException {
 		if (!file.exists()) {
 			String message = "constants.txt file not found in project folder.";
-			Logger.log(message);
+		
 			throw new FileNotFoundException(message);
 		}
 	}
@@ -45,7 +44,7 @@ public class ThresholdsParser {
 			if (isNotEmpty(line)) {
 				if (!isWellFormatted(line)) {
 					String message = "Line: " + line + "\nis not of the form 'someDescription' = 'someNumber'";
-					Logger.log(message);
+					
 					bufferedReader.close();
 					throw new IllegalArgumentException(message);
 				}
@@ -79,7 +78,7 @@ public class ThresholdsParser {
 			thresholds.setWideHierarchy(value.intValue());
 		} else {
 			String message = "No such threshold: " + key;
-			Logger.log(message);
+			
 			throw new IllegalArgumentException(message);
 		}
 	}
